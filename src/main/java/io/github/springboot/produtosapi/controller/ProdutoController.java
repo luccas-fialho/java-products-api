@@ -5,7 +5,6 @@ import io.github.springboot.produtosapi.repository.ProdutoRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -20,20 +19,32 @@ public class ProdutoController {
 
     @PostMapping
     public Produto salvar(@RequestBody Produto produto){
-        System.out.println("Salvando produto: " + produto);
         var uuid = UUID.randomUUID().toString();
         produto.setId(uuid);
         produtoRepository.save(produto);
         return produto;
     }
 
-    @GetMapping
-    public List<Produto> listar(){
-        return produtoRepository.findAll();
-    }
-
     @GetMapping("/{id}")
     public Produto buscarPorId(@PathVariable String id){
         return produtoRepository.findById(id).orElse(null);
     }
+
+    @DeleteMapping("{id}")
+    public void excluir(@PathVariable String id){
+        produtoRepository.deleteById(id);
+    }
+
+    @PutMapping("{id}")
+    public Produto atualizar(@PathVariable String id, @RequestBody Produto produto){
+        produto.setId(id);
+        produtoRepository.save(produto);
+        return produto;
+    }
+
+    @GetMapping
+    public List<Produto> buscarPorNome(@RequestParam String nome){
+        return produtoRepository.findByNome(nome);
+    }
+
 }
